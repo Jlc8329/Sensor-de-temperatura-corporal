@@ -1,5 +1,11 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
+#include <DHT.h>
+
+#define DHTPIN 4
+#define DHTTYPE DHT22
+
+DHT dht(DHTPIN, DHTTYPE);
 
 const char* ssid = "Wokwi-GUEST";
 const char* password = "";
@@ -13,8 +19,7 @@ const char* cmd_topic  = "gustavo10290057/paciente/acao";
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-int ledPin = 2; // LED no GPIO2
-
+int ledPin = 13;
 unsigned long lastMsg = 0;
 
 void reconnect() {
@@ -35,6 +40,8 @@ void reconnect() {
 
 void setup() {
   Serial.begin(115200);
+
+  dht.begin();
 
   WiFi.begin(ssid, password);
   Serial.print("Conectando ao WiFi...");
@@ -57,9 +64,13 @@ void loop() {
   if (now - lastMsg > 3000) {
     lastMsg = now;
 
-    float temp = random(355, 395) / 10.0;
+    float temp = dht.readTemperature();
 
-    // --- prints para aparecer febre ---
+    if (isnan(temp)) {
+      Serial.println("Erro ao ler o sensor!");
+      return;
+    }
+
     if (temp > 37.5) {
       Serial.print("FEBRE DETECTADA! Temperatura: ");
       Serial.println(temp);
@@ -70,7 +81,6 @@ void loop() {
       digitalWrite(ledPin, LOW);
     }
 
-    // publicação mqtt
     char msg[10];
     dtostrf(temp, 4, 2, msg);
     client.publish(temp_topic, msg);
