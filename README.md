@@ -1,7 +1,7 @@
-🩺 Monitor de Temperatura Corporal — IoT com ESP32 + MQTT
+Monitor de Temperatura Corporal — IoT com ESP32 + MQTT
 Universidade Presbiteriana Mackenzie
 Projeto Final – Sistemas Embarcados / IoT
-📌 Sobre o Projeto
+Sobre o Projeto
 
 Este projeto apresenta um monitor de temperatura corporal baseado em IoT, utilizando um ESP32, o sensor LM35 (simulado), um atuador (LED vermelho) e comunicação com a internet via protocolo MQTT, conforme exigência acadêmica.
 
@@ -42,12 +42,12 @@ Linguagem C/C++
 ✓ Sensor LM35 (simulado no Wokwi)
 ✓ LED Vermelho + Resistor 220Ω
 ✓ Conexões por fios jumpers (simulados)
-🔌 Diagrama do Circuito (Fritzing)
+Diagrama do Circuito (Fritzing)
 
 (Inserir imagem no GitHub)
 /assets/diagrama_fritzing.png
 
-🧪 Funcionamento do Sistema
+Funcionamento do Sistema
 
 O ESP32 realiza a leitura da temperatura (simulada).
 
@@ -73,12 +73,13 @@ O ESP32 responde com um acknowledge no tópico:
 
 paciente/acao_ack
 
-📡 Tópicos MQTT Usados
+Tópicos MQTT Usados
 Função	Tópico	Direção
 Publicação da temperatura	paciente/temperatura	ESP32 → Broker
 Comando para LED	paciente/acao	Cliente MQTT → ESP32
 Retorno do comando	paciente/acao_ack	ESP32 → Cliente
-▶️ Código Completo (Wokwi + MQTT + ESP32)
+Código Completo (Wokwi + MQTT + ESP32)
+
 #include <WiFi.h>
 #include <PubSubClient.h>
 
@@ -171,12 +172,11 @@ void loop() {
   delay(3000);
 }
 
-🌐 Link para Simulação Wokwi
-
-📎 (coloque aqui o link do seu projeto Wokwi)
+Link para Simulação Wokwi
+(coloque aqui o link do seu projeto Wokwi)
 https://wokwi.com/projects/...
 
-📊 Resultados Obtidos
+Resultados Obtidos
 
 Comunicação funcional via MQTT
 
