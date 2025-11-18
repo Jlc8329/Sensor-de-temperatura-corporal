@@ -1,189 +1,111 @@
-Monitor de Temperatura Corporal — IoT com ESP32 + MQTT
-Universidade Presbiteriana Mackenzie
-Projeto Final – Sistemas Embarcados / IoT
-Sobre o Projeto
+# 🌡️ Monitoramento de Temperatura com ESP32, DHT22 e MQTT  
+### Projeto para ODS 3 – Saúde e Bem-Estar
 
-Este projeto apresenta um monitor de temperatura corporal baseado em IoT, utilizando um ESP32, o sensor LM35 (simulado), um atuador (LED vermelho) e comunicação com a internet via protocolo MQTT, conforme exigência acadêmica.
+Este projeto demonstra um sistema de **monitoramento de temperatura corporal** usando **ESP32**, **sensor DHT22**, **MQTT**, e simulação completa no **Wokwi**.
 
-A solução realiza:
+Ele detecta automaticamente **febre**, aciona um **LED de alerta** e envia os dados para um **broker MQTT**, onde podem ser visualizados em tempo real via MQTT Explorer.
 
-Medição contínua da temperatura corporal
+---
 
-Detecção automática de febre (> 37,5°C)
+## 🎥 Demonstração em Vídeo  
+▶️ **Assista na íntegra no YouTube:**  
+https://youtu.be/0hQQ7PWKaec
 
-Acionamento de LED de alerta
+---
 
-Publicação das leituras em um broker MQTT
+# 🩺 Objetivo (ODS 3 – Saúde e Bem-estar)
 
-Recebimento de comandos MQTT para ligar/desligar o LED remotamente
+O projeto busca auxiliar ambientes hospitalares e clínicas através de um sistema simples, barato e eficiente para:
 
-Simulação completa no Wokwi, sem necessidade de hardware físico
+- Monitorar temperatura de pacientes à distância  
+- Detectar febre automaticamente  
+- Enviar alertas e dados para a nuvem  
+- Permitir visualização em dashboards MQTT  
 
-Este projeto também atende aos objetivos da ODS 3 – Saúde e Bem-Estar, propondo uma solução acessível para monitoramento remoto de pacientes.
+---
 
-🛠️ Tecnologias Utilizadas
+# ⚙️ Tecnologias Utilizadas
 
-ESP32 DevKit V1 (simulado no Wokwi)
+- **ESP32**  
+- **Sensor DHT22 (Temperatura e Umidade)**  
+- **MQTT (test.mosquitto.org)**  
+- **MQTT Explorer (visualização gráfica)**  
+- **Wokwi (simulação online)**  
+- **Arduino C++**
 
-MQTT – Broker test.mosquitto.org
+---
 
-MQTT Explorer para visualização
+# 🔌 Circuito – Diagrama (Wokwi)
 
-Arduino IDE
+Imagem do circuito utilizado:
 
-Wokwi Simulator
+![Circuito ESP32 + DHT22 + LED]
 
-Fritzing (diagrama do circuito)
-
-Linguagem C/C++
-
-🔧 Hardware Utilizado
-✓ ESP32 DevKit V1
-✓ Sensor LM35 (simulado no Wokwi)
-✓ LED Vermelho + Resistor 220Ω
-✓ Conexões por fios jumpers (simulados)
-Diagrama do Circuito (Fritzing)
-
-(Inserir imagem no GitHub)
-/assets/diagrama_fritzing.png
-
-Funcionamento do Sistema
-
-O ESP32 realiza a leitura da temperatura (simulada).
-
-Caso a temperatura seja maior que 37,5°C, o LED vermelho é acionado.
-
-A leitura é publicada no tópico MQTT:
-
-paciente/temperatura
+<img width="404" height="372" alt="image" src="https://github.com/user-attachments/assets/c06f318b-bc76-4ffe-bb56-46296d9b6b80" />
 
 
-O sistema também assina o tópico:
+---
 
-paciente/acao
+# 🖥️ Simulação no Wokwi
+
+O Wokwi permite simular todo o projeto sem hardware físico.  
+No DHT22, a temperatura pode ser ajustada manualmente para simular febre.
+
+Exemplo da simulação em execução:
+
+![Simulação Wokwi]
+
+<img width="812" height="923" alt="image" src="https://github.com/user-attachments/assets/6f677816-b1c5-4e7e-971f-cd47f1e4bbd4" />
 
 
-O usuário pode enviar comandos:
+---
 
-"ON" → Liga o LED
+# 📡 Publicação MQTT em Tempo Real
 
-"OFF" → Desliga o LED
+Os dados enviados ao broker podem ser visualizados no MQTT Explorer:
 
-O ESP32 responde com um acknowledge no tópico:
+![MQTT Explorer]
+<img width="1280" height="780" alt="image" src="https://github.com/user-attachments/assets/dfd0904c-c51c-4067-9aa7-aa0f7feb224b" />
 
-paciente/acao_ack
 
-Tópicos MQTT Usados
-Função	Tópico	Direção
-Publicação da temperatura	paciente/temperatura	ESP32 → Broker
-Comando para LED	paciente/acao	Cliente MQTT → ESP32
-Retorno do comando	paciente/acao_ack	ESP32 → Cliente
-Código Completo (Wokwi + MQTT + ESP32)
+---
 
-#include <WiFi.h>
-#include <PubSubClient.h>
+# 📂 Arquivos do Projeto
 
-// WIFI WOKWI
-const char* ssid = "Wokwi-GUEST";
-const char* password = "";
+Este repositório contém:
 
-// MQTT (Mosquitto)
-const char* mqtt_server = "test.mosquitto.org";
-const int mqtt_port = 1883;
+README.md
+sketch.ino
+diagram.json
 
-// MQTT Topics
-const char* temp_topic = "paciente/temperatura";
-const char* cmd_topic  = "paciente/acao";
-const char* ack_topic  = "paciente/acao_ack";
 
-WiFiClient espClient;
-PubSubClient client(espClient);
+---
 
-// LED externo no pino 13
-int ledPin = 13;
+# 🧠 Lógica de Funcionamento
 
-void callback(char* topic, byte* payload, unsigned int length) {
-  String msg = "";
-  for (unsigned int i = 0; i < length; i++) {
-    msg += (char)payload[i];
-  }
+1. O ESP32 conecta ao WiFi  
+2. Lê a temperatura do DHT22  
+3. Publica o valor no tópico MQTT:  
 
-  Serial.print("Comando recebido MQTT: ");
-  Serial.println(msg);
+gustavo10290057/paciente/temperatura
 
-  if (String(topic) == cmd_topic) {
-    if (msg == "ON") {
-      digitalWrite(ledPin, HIGH);
-    } else if (msg == "OFF") {
-      digitalWrite(ledPin, LOW);
-    }
-    client.publish(ack_topic, "ACK");
-  }
-}
+4. Se a temperatura > 37.5°C → LED acende + mensagem de **FEBRE DETECTADA**  
+5. MQTT Explorer exibe valores e gráficos em tempo real  
 
-void reconnect() {
-  while (!client.connected()) {
-    Serial.print("Conectando ao MQTT...");
-    if (client.connect("ESP32_Wokwi")) {
-      Serial.println("Conectado!");
-      client.subscribe(cmd_topic);
-    } else {
-      Serial.print("Falhou rc=");
-      Serial.print(client.state());
-      delay(3000);
-    }
-  }
-}
+---
 
-void setup() {
-  Serial.begin(115200);
-  pinMode(ledPin, OUTPUT);
+# ▶️ Como Executar no Wokwi
 
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(250);
-    Serial.print(".");
-  }
-  Serial.println("WiFi conectado!");
+1. Abra o Wokwi: https://wokwi.com  
+2. Cole o código do arquivo `sketch.ino`  
+3. Substitua o `diagram.json` pelo deste repositório  
+4. Clique em **Play**  
+5. Ajuste a temperatura no sensor DHT22 para simular febre
 
-  client.setServer(mqtt_server, mqtt_port);
-  client.setCallback(callback);
-}
+---
 
-void loop() {
-  if (!client.connected()) reconnect();
-  client.loop();
+# 👨‍💻 Autor
 
-  float temp = random(350, 400) / 10.0;
+Projeto desenvolvido por **Gustavo Henrique Cardoso**  
+Estudante da Universidade Presbiteriana Mackenzie.
 
-  if (temp > 37.5) {
-    digitalWrite(ledPin, HIGH);
-  } else {
-    digitalWrite(ledPin, LOW);
-  }
-
-  char msg[10];
-  dtostrf(temp, 4, 2, msg);
-  client.publish(temp_topic, msg);
-
-  Serial.print("Temp publicada: ");
-  Serial.println(msg);
-
-  delay(3000);
-}
-
-Link para Simulação Wokwi
-(coloque aqui o link do seu projeto Wokwi)
-https://wokwi.com/projects/...
-
-Resultados Obtidos
-
-Comunicação funcional via MQTT
-
-Gráfico de temperatura no MQTT Explorer
-
-Resposta do LED em tempo real
-
-Comandos remotos funcionando corretamente
-
-(Incluir capturas do MQTT Explorer)
