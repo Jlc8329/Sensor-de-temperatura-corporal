@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "author": "Gustavo",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp32", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-lm35", "id": "lm35", "top": 220, "left": -10, "attrs": {} },
+    { "type": "wokwi-led", "id": "led1", "top": 198, "left": -111.4, "attrs": { "color": "red" } },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 234.35,
+      "left": -48,
+      "attrs": { "value": "220" }
+    }
+  ],
+  "connections": [
+    [ "lm35:VCC", "esp32:3V3", "red", [ "v0" ] ],
+    [ "lm35:GND", "esp32:GND", "black", [ "v0" ] ],
+    [ "lm35:OUT", "esp32:34", "green", [ "v0" ] ],
+    [ "led1:K", "esp32:GND", "black", [ "v0" ] ],
+    [ "led1:A", "r1:1", "red", [ "v0" ] ],
+    [ "r1:2", "esp32:2", "orange", [ "v0" ] ],
+    [ "r1:2", "esp32:VIN", "green", [ "v-38.4", "h-5.8" ] ]
+  ],
+  "dependencies": {}
+}
