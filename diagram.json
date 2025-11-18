@@ -1,27 +1,34 @@
 {
   "version": 1,
-  "author": "Gustavo",
+  "author": "Anonymous maker",
   "editor": "wokwi",
   "parts": [
-    { "type": "wokwi-esp32-devkit-v1", "id": "esp32", "top": 0, "left": 0, "attrs": {} },
-    { "type": "wokwi-lm35", "id": "lm35", "top": 220, "left": -10, "attrs": {} },
-    { "type": "wokwi-led", "id": "led1", "top": 198, "left": -111.4, "attrs": { "color": "red" } },
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} },
     {
       "type": "wokwi-resistor",
       "id": "r1",
-      "top": 234.35,
-      "left": -48,
+      "top": 264,
+      "left": 47.45,
       "attrs": { "value": "220" }
-    }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led",
+      "top": 188.4,
+      "left": -111.4,
+      "attrs": { "color": "red" }
+    },
+    { "type": "wokwi-dht22", "id": "dht", "top": -38.1, "left": -130.2, "attrs": {} }
   ],
   "connections": [
-    [ "lm35:VCC", "esp32:3V3", "red", [ "v0" ] ],
-    [ "lm35:GND", "esp32:GND", "black", [ "v0" ] ],
-    [ "lm35:OUT", "esp32:34", "green", [ "v0" ] ],
-    [ "led1:K", "esp32:GND", "black", [ "v0" ] ],
-    [ "led1:A", "r1:1", "red", [ "v0" ] ],
-    [ "r1:2", "esp32:2", "orange", [ "v0" ] ],
-    [ "r1:2", "esp32:VIN", "green", [ "v-38.4", "h-5.8" ] ]
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "led:A", "r1:1", "red", [] ],
+    [ "r1:2", "esp:13", "green", [ "v-68.4", "h-120.19" ] ],
+    [ "led:C", "esp:GND.1", "black", [ "h-47.6", "v-76.8" ] ],
+    [ "dht:VCC", "esp:3V3", "red", [] ],
+    [ "dht:GND", "esp:GND.2", "black", [] ],
+    [ "dht:SDA", "esp:4", "green", [] ]
   ],
   "dependencies": {}
 }
