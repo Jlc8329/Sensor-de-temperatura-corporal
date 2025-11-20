@@ -1,111 +1,72 @@
-# 🌡️ Monitoramento de Temperatura com ESP32, DHT22 e MQTT  
-### Projeto para ODS 3 – Saúde e Bem-Estar
+# 🌡️ Monitor de Temperatura Corporal com ESP32, LM35 e MQTT  
+### Projeto baseado em IoT — Alinhado à ODS 3 (Saúde e Bem-Estar)
 
-Este projeto demonstra um sistema de **monitoramento de temperatura corporal** usando **ESP32**, **sensor DHT22**, **MQTT**, e simulação completa no **Wokwi**.
-
-Ele detecta automaticamente **febre**, aciona um **LED de alerta** e envia os dados para um **broker MQTT**, onde podem ser visualizados em tempo real via MQTT Explorer.
-
----
-
-## 🎥 Demonstração em Vídeo  
-▶️ **Assista na íntegra no YouTube:**  
-https://youtu.be/0hQQ7PWKaec
+Este projeto apresenta um sistema IoT para monitoramento de temperatura corporal utilizando o sensor **LM35** (sensor oficial do projeto), o microcontrolador **ESP32**, e o protocolo **MQTT** para comunicação em rede.  
+O objetivo é detectar febre de forma automática e enviar os dados em tempo real para um broker MQTT, permitindo acompanhamento remoto.
 
 ---
 
-# 🩺 Objetivo (ODS 3 – Saúde e Bem-estar)
+## ⚠️ Aviso Importante sobre a Simulação (Exigência da Disciplina)
 
-O projeto busca auxiliar ambientes hospitalares e clínicas através de um sistema simples, barato e eficiente para:
+O sensor oficial do projeto é o **LM35**, utilizado para medir temperatura corporal real por contato com a pele.  
+**Porém, o ambiente Wokwi NÃO possui o LM35**, e por isso:
 
-- Monitorar temperatura de pacientes à distância  
-- Detectar febre automaticamente  
-- Enviar alertas e dados para a nuvem  
-- Permitir visualização em dashboards MQTT  
+> **O sensor DHT22 foi utilizado APENAS para a simulação**, com a finalidade de demonstrar o funcionamento do protótipo, leitura dos dados, comunicação MQTT e acionamento do atuador.
 
----
-
-# ⚙️ Tecnologias Utilizadas
-
-- **ESP32**  
-- **Sensor DHT22 (Temperatura e Umidade)**  
-- **MQTT (test.mosquitto.org)**  
-- **MQTT Explorer (visualização gráfica)**  
-- **Wokwi (simulação online)**  
-- **Arduino C++**
+Toda a documentação, análise técnica, justificativa e funcionamento descritos no artigo são baseados no **LM35**, conforme solicitado pelo professor.
 
 ---
 
-# 🔌 Circuito – Diagrama (Wokwi)
+# 📡 Funcionalidades
 
-Imagem do circuito utilizado:
-
-![Circuito ESP32 + DHT22 + LED]
-
-<img width="404" height="372" alt="image" src="https://github.com/user-attachments/assets/c06f318b-bc76-4ffe-bb56-46296d9b6b80" />
-
-
----
-
-# 🖥️ Simulação no Wokwi
-
-O Wokwi permite simular todo o projeto sem hardware físico.  
-No DHT22, a temperatura pode ser ajustada manualmente para simular febre.
-
-Exemplo da simulação em execução:
-
-![Simulação Wokwi]
-
-<img width="812" height="923" alt="image" src="https://github.com/user-attachments/assets/6f677816-b1c5-4e7e-971f-cd47f1e4bbd4" />
-
+- Leitura da temperatura corporal usando **LM35 (real)** ou **DHT22 (simulação)**  
+- Identificação automática de febre (> 37.5 ºC)  
+- Envio da temperatura ao broker MQTT  
+- Acionamento de LED vermelho como alerta  
+- Comunicação contínua via Wi-Fi  
+- Publicação MQTT a cada 3 segundos  
 
 ---
 
-# 📡 Publicação MQTT em Tempo Real
+# 🧰 Componentes Utilizados
 
-Os dados enviados ao broker podem ser visualizados no MQTT Explorer:
+### ✔ No protótipo real (documentação oficial)
+- ESP32 DevKit V1  
+- Sensor LM35 (analógico)  
+- LED vermelho  
+- Resistor 220 Ω  
+- Protocolo MQTT (Mosquitto)
 
-![MQTT Explorer]
-<img width="1280" height="780" alt="image" src="https://github.com/user-attachments/assets/dfd0904c-c51c-4067-9aa7-aa0f7feb224b" />
-
-
----
-
-# 📂 Arquivos do Projeto
-
-Este repositório contém:
-
-README.md
-sketch.ino
-diagram.json
-
+### ✔ Na simulação (Wokwi)
+- ESP32  
+- Sensor DHT22 (apenas para simular o LM35)  
+- LED + resistor  
+- Conexões virtuais equivalentes  
 
 ---
 
-# 🧠 Lógica de Funcionamento
+# 🔌 Ligações do LM35 (Protótipo Real)
 
-1. O ESP32 conecta ao WiFi  
-2. Lê a temperatura do DHT22  
-3. Publica o valor no tópico MQTT:  
-
-gustavo10290057/paciente/temperatura
-
-4. Se a temperatura > 37.5°C → LED acende + mensagem de **FEBRE DETECTADA**  
-5. MQTT Explorer exibe valores e gráficos em tempo real  
+| LM35 | ESP32 |
+|------|-------|
+| VCC  | 3.3V  |
+| OUT  | GPIO34 (ADC) |
+| GND  | GND |
 
 ---
 
-# ▶️ Como Executar no Wokwi
+# 🛠️ Código Fonte (Importante)
 
-1. Abra o Wokwi: https://wokwi.com  
-2. Cole o código do arquivo `sketch.ino`  
-3. Substitua o `diagram.json` pelo deste repositório  
-4. Clique em **Play**  
-5. Ajuste a temperatura no sensor DHT22 para simular febre
+O código implementa:
 
----
+- Leitura analógica do LM35  
+- Leitura do DHT22 somente quando detectar que o código está rodando no Wokwi  
+- Lógica automática para identificar qual sensor está ativo  
+- Publicação MQTT  
+- Acionamento do LED  
 
-# 👨‍💻 Autor
+O arquivo `sketch.ino` já vem preparado com:
 
-Projeto desenvolvido por **Gustavo Henrique Cardoso**  
-Estudante da Universidade Presbiteriana Mackenzie.
-
+```cpp
+// LM35 = sensor oficial
+// DHT22 = apenas simulação no Wokwi
