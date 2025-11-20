@@ -6,7 +6,7 @@ O objetivo é detectar febre de forma automática e enviar os dados em tempo rea
 
 ---
 
-## ⚠️ Aviso Importante sobre a Simulação (Exigência da Disciplina)
+## ⚠️ Aviso Importante sobre a Simulação 
 
 O sensor oficial do projeto é o **LM35**, utilizado para medir temperatura corporal real por contato com a pele.  
 **Porém, o ambiente Wokwi NÃO possui o LM35**, e por isso:
