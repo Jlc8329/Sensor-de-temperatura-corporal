@@ -40,7 +40,7 @@ Toda a documentação, análise técnica, justificativa e funcionamento descrito
 
 ## 🎥 Demonstração em Vídeo  
 ▶️ **Assista na íntegra no YouTube:**  
-https://youtu.be/0hQQ7PWKaec
+[https://youtu.be/0hQQ7PWKaec](https://youtu.be/WZPJgj48b5E)
 
 # 🔌 Circuito – Diagrama (Wokwi)
 Imagem do circuito utilizado:
