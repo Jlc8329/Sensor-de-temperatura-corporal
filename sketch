@@ -2,11 +2,23 @@
 #include <PubSubClient.h>
 #include <DHT.h>
 
+// -----------------------------
+// CONFIGURAÇÃO DO SENSOR LM35 (OFICIAL DO PROJETO)
+// -----------------------------
+// LM35 -> usar no protótipo real
+// Pino ADC recomendado: GPIO34
+#define LM35_PIN 34
+
+// -----------------------------
+// SENSOR DHT22 (USADO APENAS PARA SIMULAÇÃO NO WOKWI)
+// -----------------------------
 #define DHTPIN 4
 #define DHTTYPE DHT22
-
 DHT dht(DHTPIN, DHTTYPE);
 
+// -----------------------------
+// CONFIGURAÇÃO MQTT / WIFI
+// -----------------------------
 const char* ssid = "Wokwi-GUEST";
 const char* password = "";
 
@@ -41,6 +53,7 @@ void reconnect() {
 void setup() {
   Serial.begin(115200);
 
+  // Inicializa DHT apenas na simulação
   dht.begin();
 
   WiFi.begin(ssid, password);
@@ -64,25 +77,42 @@ void loop() {
   if (now - lastMsg > 3000) {
     lastMsg = now;
 
-    float temp = dht.readTemperature();
+    // ----------------------------------------------
+    // LEITURA DO SENSOR LM35 (OFICIAL DO PROJETO)
+    // ----------------------------------------------
+    int adcValue = analogRead(LM35_PIN);
+    float voltage = adcValue * (3.3 / 4095.0); 
+    float tempLM35 = voltage * 100.0; // Conversão: 10mV por °C → (V * 100)
 
-    if (isnan(temp)) {
-      Serial.println("Erro ao ler o sensor!");
-      return;
-    }
+    // ----------------------------------------------
+    // LEITURA DO SENSOR DHT22 (APENAS PARA SIMULAÇÃO)
+    // ----------------------------------------------
+    float tempDHT = dht.readTemperature();
 
-    if (temp > 37.5) {
+    // Se estiver rodando NO WOKWI, o DHT dá leitura válida.
+    // Se estiver rodando na placa real, só o LM35 funcionará.
+    bool usandoSimulacao = !isnan(tempDHT);
+
+    float temperaturaFinal = usandoSimulacao ? tempDHT : tempLM35;
+
+    // ----------------------------------------------
+    // LÓGICA DE ALERTA (FEBRE)
+    // ----------------------------------------------
+    if (temperaturaFinal > 37.5) {
       Serial.print("FEBRE DETECTADA! Temperatura: ");
-      Serial.println(temp);
+      Serial.println(temperaturaFinal);
       digitalWrite(ledPin, HIGH);
     } else {
       Serial.print("Temperatura normal: ");
-      Serial.println(temp);
+      Serial.println(temperaturaFinal);
       digitalWrite(ledPin, LOW);
     }
 
+    // ----------------------------------------------
+    // PUBLICAR NO MQTT
+    // ----------------------------------------------
     char msg[10];
-    dtostrf(temp, 4, 2, msg);
+    dtostrf(temperaturaFinal, 4, 2, msg);
     client.publish(temp_topic, msg);
 
     Serial.print("Publicado no MQTT: ");
