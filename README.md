@@ -37,6 +37,18 @@ Toda a documentação, análise técnica, justificativa e funcionamento descrito
 - Resistor 220 Ω  
 - Protocolo MQTT (Mosquitto)
 
+
+## 🎥 Demonstração em Vídeo  
+▶️ **Assista na íntegra no YouTube:**  
+https://youtu.be/0hQQ7PWKaec
+
+# 🔌 Circuito – Diagrama (Wokwi)
+Imagem do circuito utilizado:
+
+![Circuito ESP32 + DHT22 + LED]
+
+<img width="404" height="372" alt="image" src="https://github.com/user-attachments/assets/021468ff-680a-4fe9-a211-acc04313327f" />
+
 ### ✔ Na simulação (Wokwi)
 - ESP32  
 - Sensor DHT22 (apenas para simular o LM35)  
